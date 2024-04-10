@@ -1,0 +1,72 @@
+# backend_scripts.py
+import matplotlib
+matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from datetime import datetime
+
+def create_figure():
+    fig = plt.figure(figsize=(8, 6))
+    return fig
+
+def visualize_weight(fig, data):
+    ax = fig.add_subplot(111)
+    ax.clear()
+
+    dates, weights = zip(*[(d, w) for d, w, _, _, _, _, _ in data])
+    ax.plot(dates, weights)
+    ax.set_title("Weight Trend")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Weight (kg)")
+
+    fig.autofmt_xdate()
+
+def visualize_height(fig, data):
+    ax = fig.add_subplot(111)
+    ax.clear()
+
+    dates, heights = zip(*[(d, h) for d, _, h, _, _, _, _ in data])
+    ax.plot(dates, heights)
+    ax.set_title("Height Trend")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Height (cm)")
+
+    fig.autofmt_xdate()
+
+def visualize_bp(fig, data):
+    ax = fig.add_subplot(111)
+    ax.clear()
+
+    dates, systolic, diastolic = zip(*[(d, s, d) for d, _, _, s, d, _, _ in data])
+    ax.plot(dates, systolic, label="Systolic")
+    ax.plot(dates, diastolic, label="Diastolic")
+    ax.set_title("Blood Pressure Trend")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Blood Pressure (mmHg)")
+    ax.legend()
+
+    fig.autofmt_xdate()
+
+def visualize_cholesterol(fig, data):
+    ax = fig.add_subplot(111)
+    ax.clear()
+
+    dates, cholesterol = zip(*[(d, c) for d, _, _, _, _, c, _ in data])
+    ax.plot(dates, cholesterol)
+    ax.set_title("Cholesterol Trend")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Cholesterol (mg/dL)")
+
+    fig.autofmt_xdate()
+
+def visualize_sugar(fig, data):
+    ax = fig.add_subplot(111)
+    ax.clear()
+
+    dates, sugar = zip(*[(d, s) for d, _, _, _, _, _, s in data])
+    ax.plot(dates, sugar)
+    ax.set_title("Blood Sugar Trend")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Blood Sugar (mg/dL)")
+
+    fig.autofmt_xdate()

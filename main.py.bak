@@ -1,0 +1,123 @@
+# main.py
+import tkinter as tk
+from tkinter import ttk
+from datetime import datetime
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import backend_scripts
+
+# Data structure
+health_data = []
+
+# Tkinter window
+root = tk.Tk()
+root.title("Health Data Visualization")
+
+# Frame for data input
+input_frame = ttk.Frame(root, padding=10)
+input_frame.grid(row=0, column=0, sticky="nsew")
+
+# Labels and entry fields for data input
+date_label = ttk.Label(input_frame, text="Date (YYYY-MM-DD):")
+date_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+date_entry = ttk.Entry(input_frame)
+date_entry.grid(row=0, column=1, padx=5, pady=5)
+
+weight_label = ttk.Label(input_frame, text="Weight (kg):")
+weight_label.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+weight_entry = ttk.Entry(input_frame)
+weight_entry.grid(row=1, column=1, padx=5, pady=5)
+
+height_label = ttk.Label(input_frame, text="Height (cm):")
+height_label.grid(row=2, column=0, padx=5, pady=5, sticky="w")
+height_entry = ttk.Entry(input_frame)
+height_entry.grid(row=2, column=1, padx=5, pady=5)
+
+bp_label = ttk.Label(input_frame, text="Blood Pressure (Systolic/Diastolic):")
+bp_label.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+bp_systolic_entry = ttk.Entry(input_frame)
+bp_systolic_entry.grid(row=3, column=1, padx=5, pady=5)
+bp_diastolic_entry = ttk.Entry(input_frame)
+bp_diastolic_entry.grid(row=3, column=2, padx=5, pady=5)
+
+cholesterol_label = ttk.Label(input_frame, text="Cholesterol (mg/dL):")
+cholesterol_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
+cholesterol_entry = ttk.Entry(input_frame)
+cholesterol_entry.grid(row=4, column=1, padx=5, pady=5)
+
+sugar_label = ttk.Label(input_frame, text="Blood Sugar (mg/dL):")
+sugar_label.grid(row=5, column=0, padx=5, pady=5, sticky="w")
+sugar_entry = ttk.Entry(input_frame)
+sugar_entry.grid(row=5, column=1, padx=5, pady=5)
+
+# Function to add data to the data structure
+def add_data():
+    date = date_entry.get()
+    weight = float(weight_entry.get())
+    height = float(height_entry.get())
+    bp_systolic = int(bp_systolic_entry.get())
+    bp_diastolic = int(bp_diastolic_entry.get())
+    cholesterol = int(cholesterol_entry.get())
+    sugar = int(sugar_entry.get())
+
+    try:
+        date_obj = datetime.strptime(date, "%Y-%m-%d")
+        health_data.append((date_obj, weight, height, bp_systolic, bp_diastolic, cholesterol, sugar))
+        date_entry.delete(0, "end")
+        weight_entry.delete(0, "end")
+        height_entry.delete(0, "end")
+        bp_systolic_entry.delete(0, "end")
+        bp_diastolic_entry.delete(0, "end")
+        cholesterol_entry.delete(0, "end")
+        sugar_entry.delete(0, "end")
+    except ValueError:
+        print("Invalid date format. Please enter the date in YYYY-MM-DD format.")
+
+# Button to add data
+add_button = ttk.Button(input_frame, text="Add Data", command=add_data)
+add_button.grid(row=6, column=0, columnspan=2, padx=5, pady=5)
+
+# Frame for visualizations
+viz_frame = ttk.Frame(root, padding=10)
+viz_frame.grid(row=0, column=1, sticky="nsew")
+
+# Canvas for displaying plots
+fig = backend_scripts.create_figure()
+canvas = FigureCanvasTkAgg(fig, master=viz_frame)
+canvas.draw()
+canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
+
+# Function to visualize data
+def visualize_data(metric):
+    if metric == "weight":
+        backend_scripts.visualize_weight(fig, health_data)
+    elif metric == "bp":
+        backend_scripts.visualize_bp(fig, health_data)
+    elif metric == "cholesterol":
+        backend_scripts.visualize_cholesterol(fig, health_data)
+    elif metric == "sugar":
+        backend_scripts.visualize_sugar(fig, health_data)
+
+    canvas.draw()
+
+# Buttons to visualize data
+weight_button = ttk.Button(viz_frame, text="Weight Trend", command=lambda: visualize_data("weight"))
+weight_button.pack(pady=5)
+
+bp_button = ttk.Button(viz_frame, text="Blood Pressure Trend", command=lambda: visualize_data("bp"))
+bp_button.pack(pady=5)
+
+cholesterol_button = ttk.Button(viz_frame, text="Cholesterol Trend", command=lambda: visualize_data("cholesterol"))
+cholesterol_button.pack(pady=5)
+
+sugar_button = ttk.Button(viz_frame, text="Blood Sugar Trend", command=lambda: visualize_data("sugar"))
+sugar_button.pack(pady=5)
+
+# Configure grid layout
+root.columnconfigure(0, weight=1)
+root.columnconfigure(1, weight=3)
+root.rowconfigure(0, weight=1)
+
+# Main loop
+root.mainloop()
